@@ -1,27 +1,24 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    public Transform muzzle;
-    public Bullet bullet;
-    public float msBetweenShots = 100;
-    public float muzzleVelocity = 35;
+    [SerializeField]private Transform muzzle;
+    [SerializeField]private Bullet bullet;
+    [SerializeField]private float msBetweenShots = 100;
+    [SerializeField]private float muzzleVelocity = 35;
 
-    private float shotCoolDown;
+    private float _shotCoolDown;
     
-    public void Shoot()
+    public void Shoot(float damage, LayerMask collisionMask)
     {
-        if (shotCoolDown > 0)
+        if (_shotCoolDown > 0)
         {
-            shotCoolDown -= Time.deltaTime * 1000;
+            _shotCoolDown -= Time.deltaTime * 1000;
             return;
         }
 
-        shotCoolDown = msBetweenShots;
+        _shotCoolDown = msBetweenShots;
         var newBullet = Instantiate(bullet, muzzle.position, muzzle.rotation);
-        newBullet.SetSpeed(muzzleVelocity);
+        newBullet.SetBullet(collisionMask, muzzleVelocity, damage);
     }
 }

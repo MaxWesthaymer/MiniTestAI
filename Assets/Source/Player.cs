@@ -7,8 +7,10 @@ using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Gun))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
 public class Player : LivingEntity
 {
+    [SerializeField] private float viewRadius;
     private NavMeshAgent _pathfinder;
     private Transform _target;
     private Transform _globalTarget;
@@ -29,6 +31,7 @@ public class Player : LivingEntity
 
     protected override void Start()
     {
+        SetupEntity(GameController.instance.entitySettings.playerConfig);
         base.Start();
         _gunController = GetComponent<Gun>();
         _animator = GetComponent<Animator>();
@@ -53,7 +56,7 @@ public class Player : LivingEntity
         _globalTarget = null;
     }
     
-    void Update()
+    private void Update()
     {
         if (_target == null)
         {
@@ -67,9 +70,14 @@ public class Player : LivingEntity
             _currentState = State.Retreat;
             _pathfinder.updateRotation = false;
             LookAt(_target.position);
-            _gunController.Shoot();
+            _gunController.Shoot(GetAttackDamage(), LayerMask.GetMask("Enemy"));
             _animator.SetBool("Shoot", true);
         }
+    }
+
+    private float GetAttackDamage()
+    {
+        return AttackPower * Random.value;
     }
 
     private void LookAt(Vector3 lookPoint)
@@ -109,7 +117,7 @@ public class Player : LivingEntity
         }
     }
 
-    IEnumerator FindTarget(float delay)
+    private IEnumerator FindTarget(float delay)
     {
         while (true)
         {
@@ -120,8 +128,7 @@ public class Player : LivingEntity
 
     private void FindVisibleTargets()
     {
-        var radius = 20f;
-        var closestEnemies = Physics.OverlapSphere(transform.position, radius,
+        var closestEnemies = Physics.OverlapSphere(transform.position, viewRadius,
         LayerMask.GetMask("Enemy"), QueryTriggerInteraction.Collide);
         List<Collider> visibleTargets = new List<Collider>();
 

@@ -15,8 +15,8 @@ public class Enemy : LivingEntity
         Attacking
     }
     private State _currentState;
-    private float attackDistanceThreshold = 1.5f;
-    private float timeBetweenAttacks = 1f;
+    private float _attackDistanceThreshold = 1.5f;
+    private float _timeBetweenAttacks = 1f;
     private float _attackCooldown;
     private float _myCollisionRadius;
     private float _targetCollisionRadius;
@@ -56,18 +56,18 @@ public class Enemy : LivingEntity
         }
         
         var sqrtDistToTarget = (_target.transform.position - transform.position).sqrMagnitude;
-        if (sqrtDistToTarget < Mathf.Pow(attackDistanceThreshold + _myCollisionRadius + _targetCollisionRadius, 2))
+        if (sqrtDistToTarget < Mathf.Pow(_attackDistanceThreshold + _myCollisionRadius + _targetCollisionRadius, 2))
         {
             if (_attackCooldown <= 0)
             {
-                _attackCooldown += timeBetweenAttacks;
+                _attackCooldown += _timeBetweenAttacks;
                 StartCoroutine(Attack());
-                _targetEntity.TakeHit(1);
+                _targetEntity.TakeHit(AttackPower);
             }
         }
     }
 
-    IEnumerator Attack()
+    private IEnumerator Attack()
     {
         _pathfinder.enabled = false;
         _currentState = State.Attacking;
@@ -89,7 +89,7 @@ public class Enemy : LivingEntity
         _pathfinder.enabled = true;
         _currentState = State.Chasing;
     }
-    IEnumerator UpdatePath()
+    private IEnumerator UpdatePath()
     {
         float tefrashRate = 0.25f;
         while (_hasTarget)
@@ -97,7 +97,7 @@ public class Enemy : LivingEntity
             if (_currentState == State.Chasing)
             {
                 Vector3 dirToTarget = (_target.position - transform.position).normalized;
-                Vector3 targetPosition = _target.position - dirToTarget * (_myCollisionRadius + _targetCollisionRadius + attackDistanceThreshold/2);
+                Vector3 targetPosition = _target.position - dirToTarget * (_myCollisionRadius + _targetCollisionRadius + _attackDistanceThreshold/2);
                 if (!dead)
                     _pathfinder.SetDestination(targetPosition);
             }

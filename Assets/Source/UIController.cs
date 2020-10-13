@@ -9,7 +9,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject endGamePanel;
     [SerializeField] private Text endTxt; 
     [SerializeField] private Button restartBtn; 
-    void Start()
+    private void Start()
     {
         GameController.OnEndGame += ShowEndPanel;
         restartBtn.onClick.AddListener((() =>

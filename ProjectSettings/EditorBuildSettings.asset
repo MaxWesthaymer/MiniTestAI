@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Do not shoot Aliens/Game assets/Scenes/Game scene.unity
-    guid: 5b63ebdabb5ddca42b6d94db1ec26ff8
+    path: Assets/Scenes/MainScene.unity
+    guid: 2f9cf8e3b54e2e9408106f8c287216bd
   m_configObjects: {}
